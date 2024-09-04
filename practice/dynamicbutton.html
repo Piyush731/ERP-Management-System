@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>button</title>
+</head>
+<body>
+    <button id="createnew" >new creation</button>
+    <div id="container"></div>
+    <script>
+        var btn=document.getElementById("createnew");
+        btn.addEventListener('click',function(){
+            var newb=document.createElement('button');
+            newb.innerHTML='new button';
+            document.getElementById('container').appendChild(newb);
+        });
+    </script>
+</body>
+</html>

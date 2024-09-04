@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Selection</title>
+</head>
+<body>
+    <select id="projectSelect" onchange="displayStudents()">
+        <option value="project1">Project 1</option>
+        <option value="project2">Project 2</option>
+        <option value="project3">Project 3</option>
+        <option value="project4">Project 4</option>
+        <option value="project5">Project 5</option>
+    </select>
+
+    <div id="studentList" onmouseover="mouseover(this)"></div>
+
+    <script>
+        function mouseover(element) {
+            element.style.color="red";
+        }
+        function displayStudents() {
+            const selectedProject = document.getElementById("projectSelect").value;
+
+            const students = {
+                "project1": ["Student 1", "Student 2", "Student 3"],
+                "project2": ["Student 4", "Student 5", "Student 6"],
+                "project3": ["Student 7", "Student 8", "Student 9"],
+                "project4": ["Student 10", "Student 11", "Student 12"],
+                "project5": ["Student 13", "Student 14", "Student 15"]
+            };
+
+            const studentListDiv = document.getElementById("studentList");
+            studentListDiv.innerHTML = "";
+
+            if (students[selectedProject]) {
+                for (let i = 0; i < students[selectedProject].length; i++) {
+                    const studentDiv = document.createElement("div");
+                    studentDiv.innerHTML = students[selectedProject][i];
+                    studentListDiv.appendChild(studentDiv);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
