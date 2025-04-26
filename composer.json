@@ -1,7 +1,10 @@
 {
-  "name": "acme/erp",
+  "name": "erpteam/erp-system",
   "description": "Enterprise Management System",
   "require": {
-    "php": "^8.1"
+    "php": "^8.1",
+    "ext-mysqli": "*",
+    "ext-pdo": "*",
+    "ext-pdo_pgsql": "*"
   }
 }
