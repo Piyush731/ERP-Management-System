@@ -1,5 +1,5 @@
 {
-  "name": "erp-system",
+  "name": "ERP",
   "description": "Enterprise Management System",
   "require": {
     "php": "^7.4 || ^8.0",
