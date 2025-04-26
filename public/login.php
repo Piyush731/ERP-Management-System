@@ -1,42 +1,62 @@
 <?php
+// Include the configuration file (adjust path if needed)
+require_once __DIR__ . '/../config.php';
 
-require_once 'config.php';
+// Get database connection
+$db = getDatabaseConnection();
 $dbConfig = getDbConfig();
+
+// Get user input
+$username = isset($_POST['fname']) ? $_POST['fname'] : '';
+$password = isset($_POST['pass']) ? $_POST['pass'] : '';
+
+// Initialize authentication result
+$authenticated = false;
+
+// Handle different database types
 if ($dbConfig['type'] === 'pgsql') {
-    $dsn = "pgsql:host={$dbConfig['host']};dbname={$dbConfig['name']}";
+    // PostgreSQL authentication
     try {
-        $pdo = new PDO($dsn, $dbConfig['user'], $dbConfig['pass']);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        // Use $pdo for database operations
+        $stmt = $db->prepare("SELECT password FROM login WHERE username = :username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $hashed_password = $row['password'];
+            $authenticated = password_verify($password, $hashed_password);
+        }
     } catch (PDOException $e) {
-        die("Connection failed: " . $e->getMessage());
+        die("Authentication error: " . $e->getMessage());
     }
 } else {
-    // MySQL connection
-    $con = new mysqli($dbConfig['host'], $dbConfig['user'], $dbConfig['pass'], $dbConfig['name']);
-    if ($con->connect_error) {
-        die("Connection failed: " . $con->connect_error);
+    // MySQL authentication
+    $username = mysqli_real_escape_string($db, $username);
+    
+    $stmt = $db->prepare("SELECT password FROM login WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->bind_result($hashed_password);
+    
+    if ($stmt->fetch() && password_verify($password, $hashed_password)) {
+        $authenticated = true;
     }
+    
+    $stmt->close();
 }
 
-$username = mysqli_real_escape_string($con, $_POST['fname']);
-$password = mysqli_real_escape_string($con, $_POST['pass']);
-
-// Get the hashed password from database
-$sql = "SELECT password FROM login WHERE username = ?";
-$stmt = $con->prepare($sql);
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$stmt->bind_result($hashed_password);
-
-if ($stmt->fetch() && password_verify($password, $hashed_password)) {
+// Redirect based on authentication result
+if ($authenticated) {
     // Password is correct, redirect to appropriate page
-    header('Location: admin.html'); // Or your main page
+    header('Location: admin.html');
+    exit;
 } else {
     // Invalid credentials
     header('Location: invalid_credentials_page.html');
+    exit;
 }
 
-$stmt->close();
-$con->close();
+// Close MySQL connection if using MySQL
+if ($dbConfig['type'] !== 'pgsql') {
+    $db->close();
+}
 ?>

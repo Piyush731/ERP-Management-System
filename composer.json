@@ -1,8 +1,9 @@
 {
-  "name": "ERP",
+  "name": "erp-system",
   "description": "Enterprise Management System",
   "require": {
-    "php": "^7.4 || ^8.0",
-    "ext-mysqli": "*"
+    "php": "^8.1",
+    "ext-mysqli": "*",
+    "ext-pdo": "*"
   }
-} 
+}
